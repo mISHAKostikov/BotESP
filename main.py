@@ -38,13 +38,17 @@ def recvive(message):
 
 def poller():
     while(True):
-        msg = "Ничего необычного"
+        msg = ""
         values = get_values()
 
-        if(float(values["temp"]) > 20):
-                    msg = "Теплооо"
-        for i in users:
-            bot.send_message(i, msg)
+        if(float(values["temp"]) > 100):
+            msg += "Теплооо!\n"
+        elif(float(values["hum"]) > 80):
+            msg += "Влажно!\n"
+
+        if(msg != ""):
+            for i in users:
+                bot.send_message(i, msg)
         time.sleep(5)
     
 
