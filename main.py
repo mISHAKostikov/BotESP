@@ -10,9 +10,8 @@ bot = telebot.TeleBot(TOKEN, parse_mode=None)
 
 def main_menu(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    btn1 = types.KeyboardButton("Все датчики")
-    btn2 = types.KeyboardButton("Мяу?")
-    markup.add(btn1, btn2)
+    btn1 = types.KeyboardButton("Анализ помещения")
+    markup.add(btn1)
     return markup
 
 @bot.message_handler(commands=['start', 'help'])
@@ -20,7 +19,7 @@ def send_welcome(message: types.Message):
     global users
     markup = main_menu(message)
     users.add(message.chat.id)
-    bot.send_message(message.chat.id, "Вечер в хату! у вас спирт есть?", reply_markup=markup)
+    bot.send_message(message.chat.id, "Здравствуйте, я буду следить за состоянием воздуха в помещении", reply_markup=markup)
 
 
 @bot.message_handler(func=lambda m: True)
@@ -42,9 +41,15 @@ def poller():
         values = get_values()
 
         if(float(values["temp"]) > 100):
-            msg += "Теплооо!\n"
+            msg += "Темпереатура превышает норму\n"
         elif(float(values["hum"]) > 80):
-            msg += "Влажно!\n"
+            msg += "Влажность превышает норму\n"
+        elif(float(values["lpg"] > 200)):
+            msg += "Метан превышает норму\n"
+        elif(float(values["co"] > 1000)):
+            msg += "Угарный газ превышает норму\n"
+        elif(float(values["propane"] > 50)):
+            msg += "Пропан превышает норму\n"
 
         if(msg != ""):
             for i in users:
